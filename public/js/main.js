@@ -37,6 +37,8 @@ function handleButtonClick(e) {
 document.querySelector(".form-overlay").style.display = ""
 
 function openOverlay(el){
+  document.querySelector(".form-photo p strong").textContent = el.closest(".pet-card").querySelector(".pet-name").textContent
+  document.querySelector(".form-photo img").src = el.closest(".pet-card").querySelector(".pet-card-photo img").src
   document.querySelector(".form-overlay").classList.add("form-overlay--is-visible")
 }
 
