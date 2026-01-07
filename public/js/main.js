@@ -38,7 +38,7 @@ document.querySelector(".form-overlay").style.display = ""
 
 function openOverlay(el){
   document.querySelector(".form-content").dataset.id = el.dataset.id
-  document.querySelector(".form-photo p strong").textContent = el.closest(".pet-card").querySelector(".pet-name").textContent
+  document.querySelector(".form-photo p strong").textContent = el.closest(".pet-card").querySelector(".pet-name").textContent.trim() + "."
   document.querySelector(".form-photo img").src = el.closest(".pet-card").querySelector(".pet-card-photo img").src
   document.querySelector(".form-overlay").classList.add("form-overlay--is-visible")
 }
