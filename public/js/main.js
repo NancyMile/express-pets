@@ -60,5 +60,13 @@ document.querySelector(".form-content").addEventListener("submit",async function
     comment: document.querySelector("#comment").value,
   }
 
-  console.log(userValues)
+  //console.log(userValues)
+  fetch("/submit-contact",{
+    method: "POST",
+    headers:{
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(userValues)
+  })
+
 })
