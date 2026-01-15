@@ -1,4 +1,5 @@
 const nodemailer = require("nodemailer")
+const validator = require("validator")
 const { ObjectId } = require("mongodb")
 const sanitizeHtml = require("sanitize-html")
 const petsCollection = require("../db").db().collection("pets")
@@ -9,9 +10,14 @@ const sanitizeOptions = {
 }
 
 
-exports.submitContact = async function(req, res){
+exports.submitContact = async function(req, res,next){
   if(req.body.secret.toUpperCase() !== "PUPPY"){
     console.log("Spam detected")
+    return res.json({message:"sorry"})
+  }
+
+  if(validator.isEmail(req.body.email)){
+    console.log("Invalid email")
     return res.json({message:"sorry"})
   }
 
@@ -44,27 +50,35 @@ if(!doesPetExist){
     }
   })
 
-  //email to the client
-  transport.sendMail({
-    to: ourObject.email,
-    from:"pets@test.com",
-    subject:`Thank you for for your interest in ${doesPetExist.name}`,
-    html:`<h3 style="color:purple; font-size:30px; font-weight:normal;">${ourObject.name}</h3>
-    <p> We appreciate your interest in ${doesPetExist.name}</p>
-    <p><em>${ourObject.comment}</em></p>`
-  })
+  try{
+    //email to the client
+    const promise1 = transport.sendMail({
+      to: ourObject.email,
+      from:"pets@test.com",
+      subject:`Thank you for for your interest in ${doesPetExist.name}`,
+      html:`<h3 style="color:purple; font-size:30px; font-weight:normal;">${ourObject.name}</h3>
+      <p> We appreciate your interest in ${doesPetExist.name}</p>
+      <p><em>${ourObject.comment}</em></p>`
+    })
 
-  //email to manager
-  transport.sendMail({
-    to: "petsadmin@test.com",
-    from:"pets@test.com",
-    subject:`Someone is interested in ${doesPetExist.name}`,
-    html:`<h3 style="color:purple; font-size:30px; font-weight:normal;">${ourObject.name}</h3>
-    <p> Name: ${ourObject.name}<br>
-    Pet: ${doesPetExist.name}<br>
-    Email: ${ourObject.email}<br>
-    Message: ${ourObject.comment}
-    </p>`
-  })
+    //email to manager
+    const promise2 = transport.sendMail({
+      to: "petsadmin@test.com",
+      from:"pets@test.com",
+      subject:`Someone is interested in ${doesPetExist.name}`,
+      html:`<h3 style="color:purple; font-size:30px; font-weight:normal;">${ourObject.name}</h3>
+      <p> Name: ${ourObject.name}<br>
+      Pet: ${doesPetExist.name}<br>
+      Email: ${ourObject.email}<br>
+      Message: ${ourObject.comment}
+      </p>`
+    })
+
+    await Promise.all([promise1,promise2])
+
+  }catch(err){
+    next(err)
+  }
+
   res.send("Thanks for sending data to us")
 }
