@@ -2,6 +2,7 @@ const nodemailer = require("nodemailer")
 const validator = require("validator")
 const { ObjectId } = require("mongodb")
 const sanitizeHtml = require("sanitize-html")
+const { default: isBoolean } = require("validator/lib/isBoolean")
 const petsCollection = require("../db").db().collection("pets")
 const contactsCollection = require("../db").db().collection("contacts")
 
@@ -98,4 +99,19 @@ if(!doesPetExist){
   }
 
   res.send("Thanks for sending data to us")
+}
+
+exports.viewPetContacts = async (req,res) =>{
+  if(!ObjectId.isValid(req.params.id)){
+    console.log("bad id")
+  return res.redirect("/")
+}
+
+const pet = await petsCollection.findOne({_id: new ObjectId(req.params.id)})
+  if(!pet){
+    console.log("pet not  found")
+  return res.redirect("/")
+}
+  const contacts = await contactsCollection.find({petId:  new ObjectId(req.params.id)}).toArray()
+  res.render("pet-contacts",{contacts,pet})
 }

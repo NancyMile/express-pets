@@ -595,3 +595,29 @@ textarea.form-field {
   opacity: 1;
   visibility: visible;
 }
+
+.contact-list{
+  border-collapse: collapse;
+}
+
+.contact-list th,
+.contact-list td{
+  padding: 10px;
+  vertical-align: top;
+}
+
+.contact-list th{
+  text-align: left;
+  font-weight: normal;
+  font-size: .87rem;
+  color: #7d7d7d;
+  padding: 10px;
+}
+
+.contact-list td{
+  font-size: 1 rem;
+}
+
+.contact-list tr:nth-child(even){
+  background-color: #f1f1f1;
+}

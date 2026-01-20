@@ -21,4 +21,5 @@ router.post("/admin/delete-pet-async", petController.onlyAdmin, petController.de
 
 // contact related
 router.post("/submit-contact", contactController.submitContact)
+router.get("/admin/view-pet-contacts/:id", petController.onlyAdmin, contactController.viewPetContacts)
 module.exports = router
